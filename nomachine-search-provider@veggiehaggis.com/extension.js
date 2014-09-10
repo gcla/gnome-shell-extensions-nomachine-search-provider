@@ -1,15 +1,15 @@
-/* Putty Search Provider for Gnome Shell
+/* NoMachine Search Provider for Gnome Shell
  *
  * Copyright (c) 2014 Graham Clark
  *
  * Heavily based on ssh-search-provider@gnome-shell-extensions.brot.github.com
  *
- * This programm is free software; you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
- * This programm is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -28,14 +28,14 @@ const Util = imports.misc.util;
 const IconGrid = imports.ui.iconGrid;
 
 //
-// puttySearchProvider holds the instance of the search provider
+// noMachineSearchProvider holds the instance of the search provider
 // implementation. If null, the extension is either uninitialized
 // or has been disabled via disable().
 //
-var puttySearchProvider = null;
+var noMachineSearchProvider = null;
 
-const PuttySearchIconBin = new Lang.Class({
-    Name: 'PuttySearchIconBin',
+const NoMachineSearchIconBin = new Lang.Class({
+    Name: 'NoMachineSearchIconBin',
 
     _init: function(name) {
         this.actor = new St.Bin({ reactive: true, track_hover: true });
@@ -48,22 +48,23 @@ const PuttySearchIconBin = new Lang.Class({
 
     createIcon: function(size) {
         let box = new Clutter.Box();
-        let icon = new St.Icon({ icon_name: 'putty', icon_size: size });
+        let icon = new St.Icon({ icon_name: 'NoMachine-icon', icon_size: size });
         box.add_child(icon);
         return box;
     }
 });
 
-function PuttySearchProvider() {
+function NoMachineSearchProvider() {
     this._init();
 }
 
-PuttySearchProvider.prototype = {
+NoMachineSearchProvider.prototype = {
 
     _init: function(name) {
+        this.id = 'nomachine';
         this.configHosts = [];
-        let filename = GLib.build_filenamev([GLib.get_home_dir(), '/.putty/', 'sessions']);
-        this.configDir = Gio.file_new_for_path(filename);
+        let dirname = GLib.build_filenamev([GLib.get_home_dir(), '/Documents', '/NoMachine']);
+        this.configDir = Gio.file_new_for_path(dirname);
         this.sessionsMonitor = this.configDir.monitor_directory(Gio.FileMonitorFlags.NONE, null);
         this.sessionsMonitor.connect('changed', Lang.bind(this, this._onSessionsChanged));
         this._onSessionsChanged(null, this.configDir, null, Gio.FileMonitorEvent.CREATED);
@@ -76,15 +77,14 @@ PuttySearchProvider.prototype = {
 							       Gio.FileQueryInfoFlags.NONE, null);
 	    let file_info;
             while ((file_info = enumerator.next_file (null)) != null) {
-		if (file_info.get_name() != "Default%20Settings") {
-		    this.configHosts.push(file_info.get_name());
-		}
+                let trimmed = file_info.get_name().replace(/\.[^/.]+$/, "");
+		this.configHosts.push(file_info.get_name().replace(/\.[^/.]+$/, ""));
             }
 	}
     },
 
     createResultObject: function(result, terms) {
-        let icon = new PuttySearchIconBin(result.name);
+        let icon = new NoMachineSearchIconBin(result.name);
         return icon;
     },
 
@@ -94,12 +94,13 @@ PuttySearchProvider.prototype = {
     },
 
     getResultMeta: function(resultId) {
-	return { 'id': resultId, 'name': resultId };
+	return { 'id': "nomachine-" + resultId, 'name': resultId };
     },
 
     activateResult: function(id) {
-        let cmd = ["putty", "-load"];
+        let cmd = ["/usr/NX/bin/nxplayer", "--session"];
 	cmd.push(id);
+        cmd.push(".nxs");
         Util.spawn(cmd);
     },
 
@@ -138,17 +139,17 @@ function init(meta) {
 }
 
 function enable() {
-    if (!puttySearchProvider) {
-        puttySearchProvider = new PuttySearchProvider();
-        Main.overview.addSearchProvider(puttySearchProvider);
+    if (!noMachineSearchProvider) {
+        noMachineSearchProvider = new NoMachineSearchProvider();
+        Main.overview.addSearchProvider(noMachineSearchProvider);
     }
 }
 
 function disable() {
-    if  (puttySearchProvider) {
-        Main.overview.removeSearchProvider(puttySearchProvider);
-        puttySearchProvider.sessionsMonitor.cancel();
-        puttySearchProvider = null;
+    if  (noMachineSearchProvider) {
+        Main.overview.removeSearchProvider(noMachineSearchProvider);
+        noMachineSearchProvider.sessionsMonitor.cancel();
+        noMachineSearchProvider = null;
     }
 }
 
