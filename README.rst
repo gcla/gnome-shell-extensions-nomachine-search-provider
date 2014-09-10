@@ -3,9 +3,10 @@ NoMachine Search Provider for Gnome Shell
 
 Load your NoMachine (NX) sessions from the Gnome Shell overview:
  
-.. image:: 
+.. image:: https://dl.dropboxusercontent.com/u/2039645/nomachine-search-provider.png
 
-This is a blatant copy of my earlier Putty search provider, which itself was heavily based this on the SSH Search Provider extension by Bernd Schlapsi.
+This is a blatant copy of my earlier Putty search provider, which itself was heavily based this on the SSH Search Provider extension by Bernd
+Schlapsi. You might also use the Remmina search provider_ if you use the NX plugin.
 
 
 Requirements
@@ -33,3 +34,4 @@ Info
 :Version:  1
 
 .. _`Gnome Shell`: http://live.gnome.org/GnomeShell
+.. _Remmina search provider: https://extensions.gnome.org/extension/473/remmina-search-provider/
