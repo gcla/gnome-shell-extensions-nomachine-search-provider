@@ -94,13 +94,13 @@ NoMachineSearchProvider.prototype = {
     },
 
     getResultMeta: function(resultId) {
-	return { 'id': "nomachine-" + resultId, 'name': resultId };
+	return { 'id': resultId, 'name': resultId };
     },
 
     activateResult: function(id) {
         let cmd = ["/usr/NX/bin/nxplayer", "--session"];
-	cmd.push(id);
-        cmd.push(".nxs");
+        let dirname = GLib.build_filenamev([GLib.get_home_dir(), '/Documents', '/NoMachine', id + '.nxs']);
+        cmd.push(dirname);
         Util.spawn(cmd);
     },
 
