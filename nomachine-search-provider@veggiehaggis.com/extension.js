@@ -107,10 +107,15 @@ NoMachineSearchProvider.prototype = {
     _checkHostnames: function(hostnames, terms) {
         let searchResults = [];
         for (let i=0; i<hostnames.length; i++) {
+            let doit = true;
             for (let j=0; j<terms.length; j++) {
-		if (hostnames[i].indexOf(terms[j]) != -1) {
-		    searchResults.push(hostnames[i]);
+		if (hostnames[i].indexOf(terms[j]) == -1) {
+                    doit = false;
+                    break;
 		}
+            }
+	    if (doit) {
+                searchResults.push(hostnames[i]);
             }
         }
         return searchResults;
